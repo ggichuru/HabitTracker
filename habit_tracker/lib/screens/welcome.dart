@@ -17,7 +17,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: PreferredSize(
         preferredSize: Size(MediaQuery.of(context).size.width, 1000),
         child: Container(
-          color: Colors.blue.withOpacity(0.35),
+          color: Colors.black.withOpacity(0.35),
           child: Padding(
             padding: EdgeInsets.all(20),
             child: NavigationBar(),

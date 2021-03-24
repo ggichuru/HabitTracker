@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'authDialog.dart';
+
 class CallToAction extends StatefulWidget {
   final String title;
   const CallToAction(this.title);
@@ -14,7 +16,13 @@ class _CallToActionState extends State<CallToAction> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: null,
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AuthDialog();
+            });
+      },
       onHover: (value) {
         setState(() {
           _isHovering = value;
