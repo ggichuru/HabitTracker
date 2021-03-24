@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/widgets/authDialog.dart';
 
 class NavigationBar extends StatelessWidget {
   @override
@@ -7,21 +8,24 @@ class NavigationBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text('HABIT TRACKER',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 35)),
-        Expanded(
-          child: Row(
-            // mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _NavBarItem('Contact us'),
-              SizedBox(width: MediaQuery.of(context).size.width / 20),
-              _NavBarItem('About'),
-            ],
-          ),
-        ),
-        _NavBarItem('Login'),
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 35)),
+        // Expanded(
+        //   child: Row(
+        //     // mainAxisSize: MainAxisSize.min,
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: <Widget>[
+        //       _NavBarItem('Contact us'),
+        //       SizedBox(width: MediaQuery.of(context).size.width / 20),
+        //       _NavBarItem('About'),
+        //     ],
+        //   ),
+        // ),
+        // _NavBarItem('Login'),
         SizedBox(width: MediaQuery.of(context).size.width / 50),
-        _NavBarItem('SignUp')
+        _NavBarItem('Login / Signup')
       ],
     );
   }
@@ -43,7 +47,13 @@ class __NavBarItemState extends State<_NavBarItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AuthDialog();
+            });
+      },
       onHover: (value) {
         setState(() {
           _isHovering = value;
@@ -56,7 +66,9 @@ class __NavBarItemState extends State<_NavBarItem> {
               style: TextStyle(
                   color: _isHovering ? Colors.blue[100] : Colors.white,
                   fontWeight: FontWeight.bold)),
-          SizedBox(height: 5,),
+          SizedBox(
+            height: 5,
+          ),
           Visibility(
             maintainAnimation: true,
             maintainState: true,

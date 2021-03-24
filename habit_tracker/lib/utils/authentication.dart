@@ -35,6 +35,39 @@ Future<String> registerWithEmailPassword(String email, String password) async {
   return null;
 }
 
+Future<String> signInWithEmailPassword(String email, String password) async {
+  await Firebase.initializeApp();
+
+  final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+
+  final User user = userCredential.user;
+
+  if (user != null) {
+    // checking if uid or email is null
+    assert(user.uid != null);
+    assert(user.email != null);
+
+    uid = user.uid;
+    userEmail = user.email;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final User currentUser = _auth.currentUser;
+    assert(user.uid == currentUser.uid);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('auth', true);
+
+    return 'Successfully logged in, User UID: ${user.uid}';
+  }
+
+  return null;
+}
+
 Future<String> signInWithGoogle() async {
   await Firebase.initializeApp();
 
