@@ -12,6 +12,24 @@ String userEmail;
 String name;
 String imageUrl;
 
+Future getUser() async {
+  await Firebase.initializeApp();
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool authSignedIn = prefs.getBool('auth') ?? false;
+
+  final User user = _auth.currentUser;
+
+  if (authSignedIn == true) {
+    if (user != null) {
+      uid = user.uid;
+      name = user.displayName;
+      userEmail = user.email;
+      imageUrl = user.photoURL;
+    }
+  }
+}
+
 Future<String> registerWithEmailPassword(String email, String password) async {
   // Init Firebase
   await Firebase.initializeApp();
@@ -107,6 +125,19 @@ Future<String> signInWithGoogle() async {
   }
   return null;
 }
+
+Future<String> signOut() async {
+  await _auth.signOut();
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool('auth', false);
+
+  uid = null;
+  userEmail = null;
+
+  return 'User signed out';
+}
+
 
 void signOutGoogle() async {
   await googleSignIn.signOut();
