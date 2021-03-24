@@ -6,8 +6,8 @@ class NavigationBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('HABITRACKER',
-            style: TextStyle(color: Colors.yellowAccent[700], fontWeight: FontWeight.bold, fontSize: 35)),
+        Text('HABIT TRACKER',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 35)),
         Expanded(
           child: Row(
             // mainAxisSize: MainAxisSize.min,
