@@ -36,6 +36,8 @@ dependencies:
   
   google_sign_in: ^5.0.0
 
+  collapsible_sidebar: ^1.0.7+2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
