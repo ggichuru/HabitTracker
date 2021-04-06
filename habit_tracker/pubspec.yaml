@@ -38,6 +38,8 @@ dependencies:
 
   collapsible_sidebar: ^1.0.7+2
 
+  curved_drawer: ^0.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
