@@ -33,8 +33,13 @@ dependencies:
 
   firebase_core: ^1.0.1
   firebase_auth: ^1.0.1
+  cloud_firestore: ^1.0.3
   
   google_sign_in: ^5.0.0
+
+  collapsible_sidebar: ^1.0.7+2
+
+  curved_drawer: ^0.1.2
 
 dev_dependencies:
   flutter_test:
