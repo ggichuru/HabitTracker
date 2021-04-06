@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,13 +31,21 @@ Future getUser() async {
   }
 }
 
-Future<String> registerWithEmailPassword(String email, String password) async {
+Future registerWithEmailPassword(String email, String password) async {
   // Init Firebase
   await Firebase.initializeApp();
 
   final UserCredential userCredential = await _auth
       .createUserWithEmailAndPassword(email: email, password: password);
+  // FirebaseAuth.instance
+  //   .createUserWithEmailAndPassword(email: email, password: password)
+  //   .then((result) {
+  //         FirebaseFirestore.instance.collection('users').add({
+  //           'uid': result.user.uid,
+  //           'email': result.user.email,
+  //         });
   final User user = userCredential.user;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   if (user != null) {
     assert(user.uid != null);
@@ -48,7 +57,13 @@ Future<String> registerWithEmailPassword(String email, String password) async {
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
 
-    return 'Successfully registerd, User UID: ${user.uid}';
+    //return 'Successfully registerd, User UID: ${user.uid}';
+    return users.add({
+      'uid': user.uid,
+      'email': user.email,
+      'username': user.displayName
+    });
+    
   }
   return null;
 }
@@ -138,7 +153,6 @@ Future<String> signOut() async {
   return 'User signed out';
 }
 
-
 void signOutGoogle() async {
   await googleSignIn.signOut();
   await _auth.signOut();
@@ -150,6 +164,6 @@ void signOutGoogle() async {
   name = null;
   userEmail = null;
   imageUrl = null;
-  
+
   print("User signed out of Google account");
 }

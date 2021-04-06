@@ -346,6 +346,7 @@ class _AuthDialogState extends State<AuthDialog> {
                                         textControllerPassword.text)
                                     .then((result) {
                                   if (result != null) {
+                                    
                                     setState(() {
                                       loginStatus =
                                           'You have registered successfully';
