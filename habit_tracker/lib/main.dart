@@ -18,9 +18,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Habit Tracker',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
-      // theme: ThemeData.dark(),
+      //theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData.dark(),
       home: AuthWrapper(),
+      //themeMode: ThemeMode.system,
     );
   }
 }
