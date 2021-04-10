@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/screens/welcome.dart';
 
 class MyHomePage extends StatefulWidget {
   final String documentId;
@@ -13,7 +14,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController titleController = new TextEditingController();
-  TextEditingController authorController = new TextEditingController();
+  TextEditingController descriptionController = new TextEditingController();
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,31 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 35),
         )),
         backgroundColor: Colors.yellowAccent[700],
+        actions: [
+          Padding(
+              padding: EdgeInsets.all(8.0),
+              child: IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  FirebaseAuth.instance.signOut().then((res) {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WelcomeScreen()),
+                        (Route<dynamic> route) => false);
+                  });
+                },
+              )),
+        ],
       ),
-      body: BookList(),
+      body: Container(
+          child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: HabitList(),
+      )),
       // ADD (Create)
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -35,13 +60,21 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                   elevation: 16,
                   contentPadding: EdgeInsets.all(20),
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Center(child: Text("Add Book", style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),)),
+                      Center(
+                          child: Text(
+                        "Add Habit",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      )),
                       Padding(
                         padding: EdgeInsets.only(top: 10),
                         child: Text(
@@ -55,10 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Text("Author: "),
+                        child: Text("description: "),
                       ),
                       TextField(
-                        controller: authorController,
+                        controller: descriptionController,
                       ),
                     ],
                   ),
@@ -79,53 +112,61 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     //Add Button
 
-                    RaisedButton(
-                      color: Colors.yellowAccent,
-                      onPressed: () {
-                        Map<String, dynamic> newBook =
-                            new Map<String, dynamic>();
-                        newBook["title"] = titleController.text;
-                        newBook["author"] = authorController.text;
+                    // ignore: deprecated_member_use
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      // ignore: deprecated_member_use
+                      child: RaisedButton(
+                        color: Colors.yellowAccent,
+                        onPressed: () {
+                          Map<String, dynamic> newHabit =
+                              new Map<String, dynamic>();
+                          newHabit["title"] = titleController.text;
+                          newHabit["description"] = descriptionController.text;
+                          newHabit['date'] = DateTime.now();
 
-                        FirebaseFirestore.instance
-                            .collection("books")
-                            .doc(FirebaseAuth.instance.currentUser.uid)
-                            .collection('books')
-                            .add(newBook)
-                            .whenComplete(() {
-                          Navigator.of(context).pop();
-                        });
-                      },
-                      child: Text(
-                        "save",
-                        style: TextStyle(color: Colors.black
+                          FirebaseFirestore.instance
+                              .collection("Habits")
+                              .doc(FirebaseAuth.instance.currentUser.uid)
+                              .collection('Habits')
+                              .add(newHabit)
+                              .whenComplete(() {
+                            Navigator.of(context).pop();
+                          });
+                        },
+                        child: Text(
+                          "save",
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
-                    ),)
+                    )
                   ],
                 );
               });
         },
-        tooltip: 'Add Book',
+        tooltip: 'Add Habit',
         backgroundColor: Colors.yellowAccent[700],
-        child: Icon(Icons.add_outlined, color: Colors.black,),
+        child: Icon(
+          Icons.add_outlined,
+          color: Colors.black,
+        ),
       ),
     );
   }
 }
 
 // ignore: must_be_immutable
-class BookList extends StatelessWidget {
+class HabitList extends StatelessWidget {
   TextEditingController titleController = new TextEditingController();
-  TextEditingController authorController = new TextEditingController();
+  TextEditingController descriptionController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-   
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("books")
+          .collection("Habits")
           .doc(FirebaseAuth.instance.currentUser.uid)
-          .collection('books')
+          .collection('Habits')
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
@@ -147,7 +188,7 @@ class BookList extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text("Update Dilaog"),
+                                title: Text("Edit Habits"),
                                 content: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -163,12 +204,12 @@ class BookList extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(top: 20),
-                                      child: Text("Author: "),
+                                      child: Text("description: "),
                                     ),
                                     TextField(
-                                      controller: authorController,
+                                      controller: descriptionController,
                                       decoration: InputDecoration(
-                                        hintText: document['author'],
+                                        hintText: document['description'],
                                       ),
                                     ),
                                   ],
@@ -189,55 +230,53 @@ class BookList extends StatelessWidget {
                                     ),
                                   ),
                                   // Update Button
-                                  RaisedButton(onPressed: () {
-                                    Map<String, dynamic> updateBook =
-                                        new Map<String, dynamic>();
-                                    updateBook["title"] = titleController.text;
-                                    updateBook["author"] =
-                                        authorController.text;
 
-                                    // Updae Firestore record information regular way
-                                    FirebaseFirestore.instance
-                                        .collection("books")
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser.uid)
-                                        .collection('books')
-                                        .doc(document.id)
-                                        .update(updateBook)
-                                        .whenComplete(() {
-                                      Navigator.of(context).pop();
-                                    });
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    // ignore: deprecated_member_use
+                                    child: RaisedButton(
+                                        color: Colors.yellowAccent,
+                                        onPressed: () {
+                                          Map<String, dynamic> updateHabit =
+                                              new Map<String, dynamic>();
+                                          updateHabit["title"] =
+                                              titleController.text;
+                                          updateHabit["description"] =
+                                              descriptionController.text;
 
-                                    // Update firestore record information using a transaction to prevent any conflict in data changed from different sources
-//                                         Firestore.instance.runTransaction((transaction) async {
-// //                                          await transaction.update(document.reference, {'title': titleController.text, 'author': authorController.text })
-//                                           await transaction.update(document.reference, updateBook)
-//                                               .then((error){
-//                                             Navigator.of(context).pop();
-//                                           });
-//                                         });
-//                                       },
-
-                                    child:
-                                    Text(
-                                      "update",
-                                      style: TextStyle(color: Colors.white),
-                                    );
-                                  })
+                                          // Updae Firestore record information regular way
+                                          FirebaseFirestore.instance
+                                              .collection("Habits")
+                                              .doc(FirebaseAuth
+                                                  .instance.currentUser.uid)
+                                              .collection('Habits')
+                                              .doc(document.id)
+                                              .update(updateHabit)
+                                              .whenComplete(() {
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        child: Text(
+                                          "update",
+                                          style: TextStyle(color: Colors.black),
+                                        )),
+                                  )
                                 ],
                               );
                             });
                       },
-                      title: new Text("Title: " + document['title']),
-                      subtitle: new Text("Author:  " + document['author']),
+                      title: new Text(document['title'], style: TextStyle(color: Colors.yellowAccent[700], fontWeight: FontWeight.bold),),
+                      
+                      subtitle: new Text(document['description']),
                       trailing:
                           // Delete Button
                           InkWell(
                         onTap: () {
                           FirebaseFirestore.instance
-                              .collection("books")
+                              .collection("Habits")
                               .doc(FirebaseAuth.instance.currentUser.uid)
-                              .collection('books')
+                              .collection('Habits')
                               .doc(document.id)
                               .delete()
                               .catchError((e) {

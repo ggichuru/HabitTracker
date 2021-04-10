@@ -13,6 +13,7 @@ String userEmail;
 String name;
 String imageUrl;
 
+
 Future getUser() async {
   await Firebase.initializeApp();
 
@@ -101,7 +102,7 @@ Future<String> signInWithEmailPassword(String email, String password) async {
   return null;
 }
 
-Future<String> signInWithGoogle() async {
+Future signInWithGoogle() async {
   await Firebase.initializeApp();
 
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
@@ -114,6 +115,7 @@ Future<String> signInWithGoogle() async {
 
   final UserCredential userCredential =
       await _auth.signInWithCredential(credential);
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
   final User user = userCredential.user;
 
   if (user != null) {
@@ -136,7 +138,11 @@ Future<String> signInWithGoogle() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setBool('auth', true);
 
-    return 'Google sign in successful, User UID: ${user.uid}';
+    return users.add({
+      'uid': user.uid,
+      'email': user.email,
+      'username': user.displayName
+    });
   }
   return null;
 }

@@ -24,7 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         ),
       ),
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors,
       body: SingleChildScrollView(
         child: Column(
           children: [
